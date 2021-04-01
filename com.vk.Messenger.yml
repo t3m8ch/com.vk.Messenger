@@ -1,0 +1,37 @@
+app-id: com.vk.Messenger
+runtime: org.freedesktop.Platform
+runtime-version: 20.08
+sdk: org.freedesktop.Sdk
+command: vk
+separate-locales: false
+finish-args:
+  - --share=ipc
+  - --socket=x11
+  - --socket=pulseaudio
+  - --share=network
+  - --filesystem=xdg-download  # It's the default location for downloading files.
+  - --device=all  # For correct webcam operation.
+modules:
+  - name: messenger
+    buildsystem: simple
+    build-commands:
+      - mkdir -p 
+        ${FLATPAK_DEST}/bin 
+        ${FLATPAK_DEST}/share 
+        ${FLATPAK_DEST}/share/icons/hicolor/256x256/apps 
+        ${FLATPAK_DEST}/share/icons/hicolor/24x24/apps
+      - cp -r ./bin/* ${FLATPAK_DEST}/bin/
+      - cp -r ./share/* ${FLATPAK_DEST}/share
+      - mv ${FLATPAK_DEST}/share/applications/vk.desktop 
+        ${FLATPAK_DEST}/share/applications/${FLATPAK_ID}.desktop
+      - cp ${FLATPAK_DEST}/share/vk/icon256.png 
+        ${FLATPAK_DEST}/share/icons/hicolor/256x256/apps/${FLATPAK_ID}.png
+      - cp ${FLATPAK_DEST}/share/vk/icon24.png 
+        ${FLATPAK_DEST}/share/icons/hicolor/24x24/apps/${FLATPAK_ID}.png
+      - patch ${FLATPAK_DEST}/share/applications/${FLATPAK_ID}.desktop -i ./desktopfile.patch
+    sources:
+      - type: file
+        path: ./patches/desktopfile.patch
+      - type: archive
+        url: https://desktop.userapi.com/rpm/master/vk-5.2.3.x86_64.rpm
+        sha256: 2b47c8829fd04b172af316f5a5143c52cba7397057a2a20be365867dad52dad4

@@ -1,0 +1,11 @@
+--- com.vk.Messenger.desktop	1970-01-01 04:00:00.000000000 +0400
++++ com.vk.Messenger.desktop	2021-03-31 17:26:22.342401926 +0400
+@@ -3,7 +3,7 @@
+ Comment=Simple and Easy App for Messaging on VK
+ GenericName=VK
+ Exec=vk %U --disable-gpu
+-Icon=/usr/share/pixmaps/vk.png
++Icon=com.vk.Messenger
+ Type=Application
+ StartupNotify=true
+ Categories=Network;
