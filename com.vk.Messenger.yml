@@ -31,11 +31,7 @@ modules:
       - type: script
         dest-filename: apply_extra.sh
         commands:
-          - ar x vk.deb
-          - tar -xf data.tar.xz
-          - rm control.tar.gz
-          - rm data.tar.xz
-          - rm debian-binary
+          - ar p vk.deb data.tar.xz | tar -xJf -
           - rm -r etc
           - rm vk.deb
           - mv ./usr/* .
