@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=VK Messenger
+Comment=Simple and Convenient Messaging App for VK
+GenericName=VK
+Exec=/app/bin/vk %U --disable-gpu
+Icon=com.vk.Messenger
+Type=Application
+StartupNotify=true
+Categories=Network;
+

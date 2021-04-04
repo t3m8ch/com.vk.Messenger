@@ -14,24 +14,43 @@ finish-args:
 modules:
   - name: messenger
     buildsystem: simple
-    build-commands:
-      - mkdir -p 
-        ${FLATPAK_DEST}/bin 
-        ${FLATPAK_DEST}/share 
-        ${FLATPAK_DEST}/share/icons/hicolor/256x256/apps 
-        ${FLATPAK_DEST}/share/icons/hicolor/24x24/apps
-      - cp -r ./bin/* ${FLATPAK_DEST}/bin/
-      - cp -r ./share/* ${FLATPAK_DEST}/share
-      - mv ${FLATPAK_DEST}/share/applications/vk.desktop 
-        ${FLATPAK_DEST}/share/applications/${FLATPAK_ID}.desktop
-      - cp ${FLATPAK_DEST}/share/vk/icon256.png 
-        ${FLATPAK_DEST}/share/icons/hicolor/256x256/apps/${FLATPAK_ID}.png
-      - cp ${FLATPAK_DEST}/share/vk/icon24.png 
-        ${FLATPAK_DEST}/share/icons/hicolor/24x24/apps/${FLATPAK_ID}.png
-      - patch ${FLATPAK_DEST}/share/applications/${FLATPAK_ID}.desktop -i ./desktopfile.patch
+    build_commands:
+      - install -Dm755 apply_extra.sh ${FLATPAK_DEST}/bin/apply_extra
+      - install -Dm755 run.sh ${FLATPAK_DEST}/bin/vk
+
+      # Icons and .desktop file
+      - install -Dm644 ${FLATPAK_ID}.desktop -t ${FLATPAK_DEST}/share/applications
+      - install -Dm644 icon24.png ${FLATPAK_DEST}/share/icons/hicolor/24x24/apps/${FLATPAK_ID}.png
+      - install -Dm644 icon256.png ${FLATPAK_DEST}/share/icons/hicolor/256x256/apps/${FLATPAK_ID}.png
+
+      # For extra-data to be able to extract the .deb
+      - install -Dm755 /{usr,${FLATPAK_DEST}}/bin/ar
+      - mkdir ${FLATPAK_DEST}/lib
+      - cp /usr/lib/$(gcc --print-multiarch)/libbfd-*.so ${FLATPAK_DEST}/lib
     sources:
+      - type: script
+        dest-filename: apply_extra.sh
+        commands:
+          - ar x vk.deb
+          - tar -xf data.tar.xz
+          - rm control.tar.gz
+          - rm data.tar.xz
+          - rm debian-binary
+          - rm -r etc
+          - rm vk.deb
+          - mv ./usr/* .
+      - type: extra-data
+        filename: vk.deb
+        size: 64115764
+        url: https://desktop.userapi.com/debian/pool/master/v/vk/vk_5.2.3-1_amd64.deb
+        sha256: ec407e6cfedc632b38eb1293f966f1943327d90c42648429f79bb8d068b7f364
+      - type: script
+        dest-filename: run.sh
+        commands:
+          - /app/extra/bin/vk
       - type: file
-        path: ./patches/desktopfile.patch
-      - type: archive
-        url: https://desktop.userapi.com/rpm/master/vk-5.2.3.x86_64.rpm
-        sha256: 2b47c8829fd04b172af316f5a5143c52cba7397057a2a20be365867dad52dad4
+        path: ./com.vk.Messenger.desktop
+      - type: file
+        path: ./icons/icon24.png
+      - type: file
+        path: ./icons/icon256.png
