@@ -4,6 +4,8 @@ runtime-version: 20.08
 sdk: org.freedesktop.Sdk
 command: vk
 separate-locales: false
+tags:
+  - proprietary
 finish-args:
   - --share=ipc
   - --socket=x11
